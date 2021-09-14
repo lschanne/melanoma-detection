@@ -1,0 +1,7 @@
+venv_melanoma_detection/
+dist/
+build/
+*.egg-info/
+*.pyc
+__pycache__/
+instance/
