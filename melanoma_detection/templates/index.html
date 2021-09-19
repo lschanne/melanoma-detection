@@ -1,4 +1,28 @@
 <!DOCTYPE html>
 <title>Melanoma Detection</title>
-<h1>Melanoma Detection</h1>
-<p>Welcome to our website for melanoma detection!</p>
+
+<body>
+    <h1>Melanoma Detection</h1>
+    <p>Welcome to our website for melanoma detection!</p>
+
+    <div class="container">
+        {% block content %}
+        <form method=post>
+            {% for message in form.sex.errors %}
+            <div class="flash">{{ message }}</div>
+            {% endfor %}
+            {{ form.sex.label }}
+            {{ form.sex }}
+
+            {% for message in form.age.errors %}
+            <div class="flash">{{ message }}</div>
+            {% endfor %}
+            {{ form.age.label }}
+            {{ form.age }}
+
+            {{ form.submit }}
+        </form>
+        {% endblock %}
+
+    </div>
+</body>
