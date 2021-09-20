@@ -1,15 +1,16 @@
 from wtforms import (
+    FileField,
     Form,
-    RadioField,
-    validators,
-    SubmitField, 
     IntegerField,
+    RadioField,
+    SubmitField, 
+    validators,
 )
 
 from .constants import (
-    SEX_REFUSE,
-    SEX_MALE,
     SEX_FEMALE,
+    SEX_MALE,
+    SEX_REFUSE,
 )
 
 class PatientDataForm(Form):
@@ -27,9 +28,22 @@ class PatientDataForm(Form):
     age = IntegerField(
         '[Optional] Enter the age of the patient:',
         validators=[
-            validators.NumberRange(min=0, message='Age must be greater than 0'),
+            validators.NumberRange(
+                min=0, message='Age must be greater than 0.',
+            ),
             validators.Optional(),
         ]
+    )
+
+    image_file = FileField(
+        '[Required] Image file of mole the mole:',
+        validators=[
+            # TODO
+            # validators.regexp(
+            #     r'^.+(jpe?g|png|gif|bmp)$',
+            #     message='An image file is required (jpg, png, gif, bmp).'
+            # ),
+        ],
     )
 
     submit = SubmitField("Enter")

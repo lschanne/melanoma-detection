@@ -2,7 +2,7 @@ from flask import render_template, request, Response
 from flask.views import View
 
 from .forms import PatientDataForm
-from .utils import get_prediction_results
+from .utils import get_prediction_results, process_form
 
 class Index(View):
     methods = ['GET', 'POST']
@@ -20,5 +20,7 @@ class Index(View):
         if not form.validate():
             return render_template('index.html', form=form)
 
-        context = get_prediction_results(request.form)
+        model_inputs = process_form(request, form)
+        context = get_prediction_results(**model_inputs)
+
         return render_template('results.html', **context)
