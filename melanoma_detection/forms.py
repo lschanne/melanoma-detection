@@ -13,7 +13,7 @@ from .constants import (
     SEX_REFUSE,
 )
 
-class PatientDataForm(Form):
+class PatientData(Form):
     '''
     Form for collecting the image of the mole and other patient data.
     '''

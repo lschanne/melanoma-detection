@@ -1,6 +1,6 @@
 from typing import Union
 
-from .forms import PatientDataForm
+from .forms import PatientData
 from .constants import (
     SEX_REFUSE,
     AGE_REFUSE,
@@ -29,14 +29,14 @@ def get_prediction_results(
         predicted_probability: float
             the predicted probability that the mole is malignant
     '''
-    # TODO
+    # TODO what metrics should we report?
     return {
         'predicted_probability': 0.1,
     }
 
-def process_form(request: 'flask.request', form: PatientDataForm) -> dict:
+def process_form(request: 'flask.request', form: PatientData) -> dict:
     '''
-    Extract model inputs from the PatientDataForm and the incoming http request.
+    Extract model inputs from the PatientData and the incoming http request.
 
     Parameters
     ----------

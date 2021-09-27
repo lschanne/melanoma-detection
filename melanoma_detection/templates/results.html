@@ -1,7 +1,5 @@
-<!DOCTYPE html>
-<title>Melanoma Detection: Results</title>
-
-<body>
+{% extends "base.html" %}
+{% block content %}
     <h1>Melanoma Detection</h1>
     <p>We predict that the probability of this mole being malignant is {{predicted_probability}}</p>
-</body>
+{% endblock %}
