@@ -1,6 +1,7 @@
 from flask import render_template, request, Response
 from flask.views import View
 
+from .constants import AUTHORS
 from .forms import PatientData
 from .utils import get_prediction_results, process_form
 
@@ -9,6 +10,7 @@ class RenderTemplateView(View):
     Base View class for accepting a GET request and rendering a page.
     '''
     methods = ['GET']
+    context = {}
 
     @property
     def template(self):
@@ -17,13 +19,14 @@ class RenderTemplateView(View):
         )
 
     def dispatch_request(self) -> Response:
-        return render_template(self.template)
+        return render_template(self.template, **self.context)
 
 class Overview(RenderTemplateView):
     template = 'overview.html'
 
 class About(RenderTemplateView):
     template = 'about.html'
+    context = {'authors': AUTHORS}
 
 class Performance(RenderTemplateView):
     template = 'performance.html'

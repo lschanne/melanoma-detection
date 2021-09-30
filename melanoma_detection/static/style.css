@@ -71,3 +71,16 @@ input[type=submit] { align-self: start; min-width: 10em; }
   border-bottom: 1px solid #333333;
   border-left: 1px solid #CCCCCC;
 }
+
+/* https://stackoverflow.com/questions/50855002/how-can-i-make-the-profile-image-in-circular-shape */
+.headshot {
+  height: 250px;
+  width: 250px;
+  border-radius: 50%;
+}
+
+
+.author {
+    vertical-align: middle;
+    text-align: center;
+}

@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>About</h1>
-<p>TODO: introduce the team!</p>
-<p>Provide contact info</p>
+<h1>Say hello to the team!</h1>
+<p>We are all graduate students in the University of California, Berkeley's Masters in Data Science and Information (MIDS) program. We are graduating from the program in December 2021 and have put together this website as part of our capstone project.</p>
+{% for author in authors %}
+    <div class="author">
+        <img class="headshot" src="{{ url_for('static', filename=author.image) }}" alt="unplash">
+        <p>{{ author.name }} | <u>{{ author.email }}</u></p>
+    </div>
+{% endfor %}
 {% endblock %}
