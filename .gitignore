@@ -1,4 +1,5 @@
 venv_melanoma_detection/
+.ipynb_checkpoints/
 dist/
 build/
 *.egg-info/
