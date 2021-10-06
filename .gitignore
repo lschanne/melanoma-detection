@@ -3,5 +3,6 @@ dist/
 build/
 *.egg-info/
 *.pyc
+w210_ami_key.pem
 __pycache__/
 instance/
