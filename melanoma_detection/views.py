@@ -3,7 +3,7 @@ from flask.views import View
 
 from .constants import AUTHORS
 from .forms import PatientData
-from .utils import get_prediction_results, load_keras_model, process_form
+from .utils import get_prediction_results, load_keras_model
 
 class RenderTemplateView(View):
     '''
@@ -54,8 +54,5 @@ class Prediction(View):
     def post(self, form: PatientData) -> Response:
         if not form.validate():
             return render_template('prediction.html', form=form)
-
-        model_inputs = process_form(request, form)
-        context = get_prediction_results(self.model, **model_inputs)
-
+        context = get_prediction_results(self.model, request, form)
         return render_template('results.html', **context)

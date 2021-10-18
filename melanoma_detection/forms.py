@@ -8,6 +8,7 @@ from wtforms import (
 )
 
 from .constants import (
+    AnatomicSite,
     SEX_FEMALE,
     SEX_MALE,
     SEX_REFUSE,
@@ -44,6 +45,11 @@ class PatientData(Form):
             #     message='An image file is required (jpg, png, gif, bmp).'
             # ),
         ],
+    )
+
+    anatomic_site = RadioField(
+        'Select the anatomic site of the mole/lesion:',
+        choices=AnatomicSite.choices,
     )
 
     submit = SubmitField("Enter")

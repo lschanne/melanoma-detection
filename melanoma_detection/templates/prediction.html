@@ -21,6 +21,13 @@
             {{ form.image_file.label }}
             {{ form.image_file }}
 
+            <br>
+            {% for message in form.anatomic_site.errors %}
+            <div class="flash">{{ message }}</div>
+            {% endfor %}
+            {{ form.anatomic_site.label }}
+            {{ form.anatomic_site }}
+
             {{ form.submit }}
         </form>
     </div>

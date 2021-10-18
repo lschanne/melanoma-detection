@@ -84,3 +84,7 @@ input[type=submit] { align-self: start; min-width: 10em; }
     vertical-align: middle;
     text-align: center;
 }
+
+.indented {
+  text-indent: 5vh;
+}

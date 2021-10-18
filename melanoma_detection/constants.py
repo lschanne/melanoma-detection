@@ -18,3 +18,14 @@ Author = namedtuple('Author', ['name', 'email', 'image'])
 AUTHORS = [
     Author('Luke Schanne', 'lschanne@berkeley.edu', 'images/luke.jpg'),
 ]
+
+class AnatomicSite:
+    choices = [
+        'head/neck',
+        'upper e4xtremity',
+        'lower extremity',
+        'torso',
+        'palms/soles',
+        'oral/genital',
+        'not sure',
+    ]

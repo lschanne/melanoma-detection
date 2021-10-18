@@ -2,4 +2,12 @@
 {% block content %}
     <h1>Melanoma Detection</h1>
     <p>We predict that the probability of this mole being malignant is {{predicted_probability}}</p>
+    <br>
+    <p>This prediction is based on the following inputs we received:</p>
+    <div class="indented">
+        <p>Sex: {{sex}}</p>
+        <p>Age: {{age}}</p>
+        <p>Image File: {{file_name}}</p>
+        <p>Anatomic Site: {{anatomic_site}}</p>
+    </div>
 {% endblock %}
