@@ -8,5 +8,5 @@ AGE_REFUSE = ''
 
 Author = namedtuple('Author', ['name', 'email', 'image'])
 AUTHORS = [
-    Author('Luke Schanne', 'lschanne@berkeley.edu', 'images/luke.jpg'),
+    Author('Sharon Cheng', 'hycheng@berkeley.edu', 'images/sharon.jpg'),
 ]
