@@ -17,6 +17,7 @@ TARGET_IMG_SIZE = (224, 224)
 Author = namedtuple('Author', ['name', 'email', 'image'])
 AUTHORS = [
     Author('Luke Schanne', 'lschanne@berkeley.edu', 'images/luke.jpg'),
+    Author('Lingyao Meng', 'lingyaomeng@berkeley.edu', 'images/lingyao.jpg'),
 ]
 
 class AnatomicSite:
