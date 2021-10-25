@@ -8,6 +8,8 @@
             {{ form.sex.label }}
             {{ form.sex }}
 
+            <br>
+
             {% for message in form.age.errors %}
             <div class="flash">{{ message }}</div>
             {% endfor %}
@@ -15,6 +17,8 @@
             {{ form.age }}
 
             <br>
+            <br>
+
             {% for message in form.image_file.errors %}
             <div class="flash">{{ message }}</div>
             {% endfor %}
@@ -22,11 +26,15 @@
             {{ form.image_file }}
 
             <br>
+            <br>
+
             {% for message in form.anatomic_site.errors %}
             <div class="flash">{{ message }}</div>
             {% endfor %}
             {{ form.anatomic_site.label }}
             {{ form.anatomic_site }}
+
+            <br>
 
             {{ form.submit }}
         </form>

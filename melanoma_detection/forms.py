@@ -50,6 +50,7 @@ class PatientData(Form):
     anatomic_site = RadioField(
         'Select the anatomic site of the mole/lesion:',
         choices=AnatomicSite.choices,
+        validators=[validators.Required()],
     )
 
     submit = SubmitField("Enter")
