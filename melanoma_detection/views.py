@@ -3,7 +3,10 @@ from flask.views import View
 
 from .constants import AUTHORS
 from .forms import PatientData
-from .utils import get_prediction_results, load_keras_model
+from .models import Model
+
+# only initialize it once because it takes a while to load the model
+model = Model()
 
 class RenderTemplateView(View):
     '''
@@ -38,10 +41,6 @@ class Prediction(View):
     '''
     methods = ['GET', 'POST']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.model = load_keras_model()
-
     def dispatch_request(self, *args, **kwargs) -> Response:
         form = PatientData(request.form)
         if request.method == 'GET':
@@ -54,5 +53,5 @@ class Prediction(View):
     def post(self, form: PatientData) -> Response:
         if not form.validate():
             return render_template('prediction.html', form=form)
-        context = get_prediction_results(self.model, request, form)
+        context = model.predict(request, form)
         return render_template('results.html', **context)
