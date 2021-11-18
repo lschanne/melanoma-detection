@@ -1,13 +1,17 @@
+from io import BytesIO
 from keras.models import load_model
 from keras.preprocessing.image import img_to_array, load_img
 import numpy as np
+import pandas as pd
 import pickle
 from PIL import Image
 from tensorflow.keras import Sequential
 from tensorflow.keras.applications import ResNet50
 from tensorflow.keras.layers import GlobalAveragePooling2D
 
-from .constants import AnatomicSite, MODEL_PATH, PREPROCESSOR_PATH
+from .constants import (
+    AGE_REFUSE, AnatomicSite, MODEL_PATH, PREPROCESSOR_PATH, SEX_REFUSE, 
+)
 from .forms import PatientData
 
 class Model:
@@ -59,31 +63,44 @@ class Model:
         anatomic_site = request.form.get('anatomic_site', AnatomicSite.REFUSE)
         image_file = request.files[form.image_file.name]
 
+        str_fill_value = 'unknown'
         if sex == SEX_REFUSE:
-            sex = np.nan
+            sex = str_fill_value
+        else:
+            sex = sex.lower()
+
         if age == AGE_REFUSE:
             age = np.nan
         if anatomic_site == AnatomicSite.REFUSE:
-            anatomic_site = np.nan
+            anatomic_site = str_fill_value
+
+        else:
+            anatomic_site = anatomic_site.lower()
 
         img = self._preprocess_image(image_file.read())
-        image_features = model_ResNet50.predict(img)
+        image_features = self._resnet50.predict(img)
         full_features = pd.concat(
-            pd.DataFrame(
-                {
-                    'sex': sex,
-                    'age_approx': age,
-                    'anatom_site_general_challenge': anatomic_site,
-                },
-                index=0
+            (
+                pd.DataFrame(
+                    {
+                        'sex': sex,
+                        'age_approx': age,
+                        'anatom_site_general_challenge': anatomic_site,
+                    },
+                    index=[0],
+                ),
+                pd.DataFrame(
+                    image_features,
+                    columns=map(str, range(len(image_features[0]))),
+                ),
             ),
-            pd.DataFrame(image_features),
             axis=1,
         )
         transformed_features = self._preprocessor.transform(full_features)
-        prediction = self.model.predict(
+
+        prediction = self._model.predict(
             pd.DataFrame(transformed_features)
-        )[0, 1]
+        )[0, 0]
         return {
             'sex': sex,
             'age': age,
@@ -110,44 +127,11 @@ class Model:
         np.ndarray
             matrix form of image
         '''
-        img = Image.open(BytesIO(image_data))
-        img = img.convert('RGB')
-        img = img.resize(cls.TARGET_IMG_SIZE, Image.NEAREST)
-        img = img_to_array(img)
-        img = np.expand_dims(img, axis=0)
-        img = ImageDataGenerator(rescale=1./255).flow(img, batch_size=1)[0]
-        return img
-
-
-### START: Custom classes used by the preprocessor ###
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import LabelEncoder
-
-class ColumnSelector(BaseEstimator, TransformerMixin):
-    """Select only specified columns."""
-    def __init__(self, columns):
-        self.columns = columns
-
-    def fit(self, X, y=None):
-        return self
-
-    def transform(self, X):
-        return X[self.columns]
-
-class Encoder(BaseEstimator, TransformerMixin):
-    def __init__(self):
-        self._encoders = {}
-    
-    def fit(self, X, y=None):
-        for col in X.columns:
-            encoder = LabelEncoder()
-            encoder.fit(X[col])
-            self._encoders[col] = encoder
-        return self
-    
-    def transform(self, X):
-        X_new = pd.DataFrame()
-        for col, encoder in self._encoders.items():
-            X_new[col] = encoder.transform(X[col])
-        return X_new
-### END: Custom classes used by the preprocessor ###
+        with Image.open(BytesIO(image_data)) as f:
+            img = load_img(
+                f,
+                color_mode='rgb',
+                target_size=cls.TARGET_IMG_SIZE,
+                interpolation='nearest',
+            )
+        return np.array([img_to_array(img)]) / 255

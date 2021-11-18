@@ -9,3 +9,4 @@ __pycache__/
 instance/
 melanoma_detection/static/model.hdf5
 melanoma_detection/static/preprocessor.pkl
+models/
