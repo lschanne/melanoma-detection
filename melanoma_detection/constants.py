@@ -9,8 +9,11 @@ AGE_REFUSE = ''
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
-MODEL_PATH = os.path.join(STATIC_DIR, 'model.hdf5')
 PREPROCESSOR_PATH = os.path.join(STATIC_DIR, 'preprocessor.pkl')
+
+# MODEL_PATH = os.path.join(STATIC_DIR, 'model.hdf5')
+MODEL_PATH = os.path.join(STATIC_DIR, 'model.joblib')
+
 
 Author = namedtuple('Author', ['name', 'email', 'image'])
 AUTHORS = [

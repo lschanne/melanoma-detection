@@ -7,6 +7,6 @@ build/
 w210_ami_key.pem
 __pycache__/
 instance/
-melanoma_detection/static/model.hdf5
+melanoma_detection/static/model.*
 melanoma_detection/static/preprocessor.pkl
 models/

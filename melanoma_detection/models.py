@@ -1,6 +1,7 @@
 from io import BytesIO
-from keras.models import load_model
-from keras.preprocessing.image import img_to_array, load_img
+import joblib
+# from keras.models import load_model
+from keras.preprocessing.image import img_to_array, ImageDataGenerator
 import numpy as np
 import pandas as pd
 import pickle
@@ -21,7 +22,8 @@ class Model:
     def __init__(self):
         with open(PREPROCESSOR_PATH, 'rb') as f:
             self._preprocessor = pickle.load(f)
-        self._model = load_model(MODEL_PATH)
+        # self._model = load_model(MODEL_PATH)
+        self._model = joblib.load(MODEL_PATH)
         self._resnet50 = Sequential([
             ResNet50(
                 input_shape=self.RESNET_SHAPE,
@@ -98,9 +100,13 @@ class Model:
         )
         transformed_features = self._preprocessor.transform(full_features)
 
-        prediction = self._model.predict(
+        prediction = self._model.predict_proba(
             pd.DataFrame(transformed_features)
         )[0, 0]
+
+        # prediction = self._model.predict(
+        #     pd.DataFrame(transformed_features)
+        # )[0, 0]
         return {
             'sex': sex,
             'age': age,
@@ -128,10 +134,9 @@ class Model:
             matrix form of image
         '''
         with Image.open(BytesIO(image_data)) as f:
-            img = load_img(
-                f,
-                color_mode='rgb',
-                target_size=cls.TARGET_IMG_SIZE,
-                interpolation='nearest',
-            )
-        return np.array([img_to_array(img)]) / 255
+            img = f.convert('RGB')
+            img = img.resize(cls.TARGET_IMG_SIZE, Image.NEAREST)
+            img = img_to_array(img)
+            img = np.expand_dims(img, axis=0)
+            img = ImageDataGenerator(rescale=1./255).flow(img, batch_size=1)[0]
+            return img
