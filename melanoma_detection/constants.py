@@ -11,8 +11,11 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 PREPROCESSOR_PATH = os.path.join(STATIC_DIR, 'preprocessor.pkl')
 
-# MODEL_PATH = os.path.join(STATIC_DIR, 'model.hdf5')
-MODEL_PATH = os.path.join(STATIC_DIR, 'model.joblib')
+USE_LR = False # Logistic Regression (LR) or Neural Network
+if USE_LR:
+    MODEL_PATH = os.path.join(STATIC_DIR, 'model.joblib')
+else:
+    MODEL_PATH = os.path.join(STATIC_DIR, 'model.hdf5')
 
 
 Author = namedtuple('Author', ['name', 'email', 'image'])

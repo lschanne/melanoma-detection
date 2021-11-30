@@ -1,6 +1,6 @@
 from io import BytesIO
 import joblib
-# from keras.models import load_model
+from keras.models import load_model
 from keras.preprocessing.image import img_to_array, ImageDataGenerator
 import numpy as np
 import pandas as pd
@@ -11,7 +11,7 @@ from tensorflow.keras.applications import ResNet50
 from tensorflow.keras.layers import GlobalAveragePooling2D
 
 from .constants import (
-    AGE_REFUSE, AnatomicSite, MODEL_PATH, PREPROCESSOR_PATH, SEX_REFUSE, 
+    AGE_REFUSE, AnatomicSite, MODEL_PATH, PREPROCESSOR_PATH, SEX_REFUSE, USE_LR
 )
 from .forms import PatientData
 
@@ -22,8 +22,10 @@ class Model:
     def __init__(self):
         with open(PREPROCESSOR_PATH, 'rb') as f:
             self._preprocessor = pickle.load(f)
-        # self._model = load_model(MODEL_PATH)
-        self._model = joblib.load(MODEL_PATH)
+        if USE_LR:
+            self._model = joblib.load(MODEL_PATH)
+        else:
+            self._model = load_model(MODEL_PATH)
         self._resnet50 = Sequential([
             ResNet50(
                 input_shape=self.RESNET_SHAPE,
@@ -100,19 +102,21 @@ class Model:
         )
         transformed_features = self._preprocessor.transform(full_features)
 
-        prediction = self._model.predict_proba(
-            pd.DataFrame(transformed_features)
-        )[0, 0]
+        if USE_LR:
+            prediction = self._model.predict_proba(
+                pd.DataFrame(transformed_features)
+            )[0, 0]
+        else:
+            prediction = self._model.predict(
+                pd.DataFrame(transformed_features)
+            )[0, 0]
 
-        # prediction = self._model.predict(
-        #     pd.DataFrame(transformed_features)
-        # )[0, 0]
         return {
-            'sex': sex,
-            'age': age,
+            'sex': '' if sex is np.nan else sex,
+            'age': '' if age is np.nan else age,
             'file_name': image_file.filename,
             'anatomic_site': anatomic_site,
-            'predicted_probability': prediction,
+            'predicted_probability': f'{100 * prediction:.2f}%',
         }
 
     @classmethod
