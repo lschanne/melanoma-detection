@@ -9,4 +9,23 @@
         <p>Image File: {{file_name}}</p>
         <p>Anatomic Site: {{anatomic_site}}</p>
     </div>
+
+    {% if counterfactuals %}
+        <br>
+        <p>We noticed that you have omitted some data, so we produced some counterfactuals that our model would have predicted if you gave us the following inputs:</p>
+        <table id="counterfactual_table" class="indented">
+            <TR>
+                <TD>Key</TD>
+                <TD>Value</TD>
+                <TD>Predicted Probability</TD>
+            </TR>
+            {% for items in counterfactuals %}
+                <TR>
+                    <TD>{{ items.0 }}</TD>
+                    <TD>{{ items.1 }}</TD>
+                    <TD>{{ items.2 }}</TD>
+                </TR>
+            {% endfor %}
+        </table>
+    {% endif %}
 {% endblock %}

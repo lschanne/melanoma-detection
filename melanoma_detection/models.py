@@ -68,33 +68,49 @@ class Model:
         image_file = request.files[form.image_file.name]
 
         str_fill_value = 'unknown'
+        counterfactuals = {}
         if sex == SEX_REFUSE:
             sex = str_fill_value
+            counterfactuals['sex'] = ['male', 'female']
         else:
             sex = sex.lower()
 
         if age == AGE_REFUSE:
             age = np.nan
+            counterfactuals['age'] = [20, 30, 40, 50, 60, 70]
         if anatomic_site == AnatomicSite.REFUSE:
             anatomic_site = str_fill_value
-
+            counterfactuals['anatomic site'] = AnatomicSite.sites
         else:
             anatomic_site = anatomic_site.lower()
+        
+
 
         img = self._preprocess_image(image_file.read())
         image_features = self._resnet50.predict(img)
+
+        key_map = {
+            'age': 'age_approx',
+            'anatomic site': 'anatomic_site_general_challenge',
+        }
+        metadata = {
+            'sex': sex,
+            'age_approx': age,
+            'anatom_site_general_challenge': anatomic_site,
+        }
+        rows = [metadata]
+        for key, values in counterfactuals.items():
+            new_key = key_map.get(key, key)
+            for value in values:
+                new_row = dict(metadata)
+                new_row[new_key] = value
+                rows.append(new_row)
+
         full_features = pd.concat(
             (
+                pd.DataFrame(rows),
                 pd.DataFrame(
-                    {
-                        'sex': sex,
-                        'age_approx': age,
-                        'anatom_site_general_challenge': anatomic_site,
-                    },
-                    index=[0],
-                ),
-                pd.DataFrame(
-                    image_features,
+                    np.repeat(image_features, len(rows), axis=0),
                     columns=map(str, range(len(image_features[0]))),
                 ),
             ),
@@ -103,27 +119,40 @@ class Model:
         transformed_features = self._preprocessor.transform(full_features)
 
         if USE_LR:
-            prediction = self._model.predict_proba(
+            predictions = self._model.predict_proba(
                 pd.DataFrame(transformed_features)
-            )[0, 0]
+            )
         else:
-            prediction = self._model.predict(
+            predictions = self._model.predict(
                 pd.DataFrame(transformed_features)
-            )[0, 0]
+            )
+        
+        predictions = [
+            f'{100 * prediction:.2f}%' for prediction in predictions.flatten()
+        ]
+        counterfactual_predictions = []
+        iii = 0
+        for key, values in counterfactuals.items():
+            for value in values:
+                iii += 1
+                counterfactual_predictions.append(
+                    (key, value, predictions[iii])
+                )
 
         return {
             'sex': '' if sex is np.nan else sex,
             'age': '' if age is np.nan else age,
             'file_name': image_file.filename,
             'anatomic_site': anatomic_site,
-            'predicted_probability': f'{100 * prediction:.2f}%',
+            'predicted_probability': predictions[0],
+            'counterfactuals': counterfactual_predictions,
         }
 
     @classmethod
     def _preprocess_image(cls, image_data: bytes) -> np.ndarray:
         '''
-        Convert the binary contents of the image file into a matrix for the model
-        to use.
+        Convert the binary contents of the image file into a matrix for the
+        model to use.
         
         https://github.com/keras-team/keras/issues/11684
 

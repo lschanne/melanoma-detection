@@ -27,12 +27,15 @@ AUTHORS = [
 
 class AnatomicSite:
     REFUSE = 'not sure'
-    choices = [
+    sites = [
         'head/neck',
         'upper extremity',
         'lower extremity',
         'torso',
         'palms/soles',
         'oral/genital',
+    ]
+    choices = [
+        *sites,
         REFUSE,
     ]

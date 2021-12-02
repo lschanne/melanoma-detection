@@ -88,3 +88,7 @@ input[type=submit] { align-self: start; min-width: 10em; }
 .indented {
   text-indent: 5vh;
 }
+
+#counterfactual_table.TR {
+  width: 20vh;
+}
